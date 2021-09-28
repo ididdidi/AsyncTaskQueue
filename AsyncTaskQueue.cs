@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
-using static ru.mofrison.AsyncTaskQueue.AsyncTask;
+using static ru.mofrison.AsyncTasks.AsyncTask;
 
-namespace ru.mofrison.AsyncTaskQueue
+namespace ru.mofrison.AsyncTasks
 {
     public class AsyncTaskQueue
     {
         private readonly List<AsyncTask> defaultQueue = new List<AsyncTask>();
         private readonly List<AsyncTask> highQueue = new List<AsyncTask>();
         private readonly List<AsyncTask> curentTasks = new List<AsyncTask>();
-        private readonly ushort maxSixeCurentList;
+        private readonly int maxNumberOfThreads;
 
-        public int Count => defaultQueue.Count + highQueue.Count; 
-        public ushort MaxSixeCurentList => maxSixeCurentList;
-        public bool NextIsRedy => Count > 0 && curentTasks.Count < maxSixeCurentList;
+        public int Count => defaultQueue.Count + highQueue.Count;
+        public int NumberOfThreads => curentTasks.Count;
+        public int MaxNumberOfThreads => maxNumberOfThreads;
+        public bool NextIsRedy => Count > 0 && curentTasks.Count < maxNumberOfThreads;
 
-        public AsyncTaskQueue(ushort maxSixeCurentList = 1)
+        public AsyncTaskQueue(int maxNumberOfThreads = 1)
         {
-            if(maxSixeCurentList < 1)
+            if(maxNumberOfThreads < 1)
             {
                 throw new System.ArgumentException(
-                    string.Format("[{0}] error: maximum size of current tasks = {1}. Please set it to a value greater than 1 ", this, maxSixeCurentList));
+                    string.Format("[{0}] error: maximum size of current tasks = {1}. Please set it to a value greater than 1 ", this, maxNumberOfThreads));
             }
-            this.maxSixeCurentList = maxSixeCurentList;
+            this.maxNumberOfThreads = maxNumberOfThreads;
         }
 
         public void Add(AsyncTask item)
@@ -41,7 +42,7 @@ namespace ru.mofrison.AsyncTaskQueue
                 case AsyncTask.Priority.Interrupt:
                     {
                         highQueue.Insert(0, item);
-                        if (curentTasks.Count == maxSixeCurentList)
+                        if (curentTasks.Count == maxNumberOfThreads)
                         {
                             switch (curentTasks[0].priority)
                             {
@@ -86,7 +87,7 @@ namespace ru.mofrison.AsyncTaskQueue
 
             if (queue.Count > 0)
             {
-                if(curentTasks.Count < maxSixeCurentList)
+                if(curentTasks.Count < maxNumberOfThreads)
                 {
                     curentTasks.Insert(0, queue[0]);
                     queue.Remove(curentTasks[0]);
@@ -101,7 +102,7 @@ namespace ru.mofrison.AsyncTaskQueue
             return null;
         }
 
-        public void RemoveFromCurrentTasks(AsyncTask task)
+        private void RemoveFromCurrentTasks(AsyncTask task)
         {
             if (curentTasks.Contains(task)) { curentTasks.Remove(task); }
         }
@@ -113,7 +114,6 @@ namespace ru.mofrison.AsyncTaskQueue
             while(curentTasks.Count > 0)
             {
                 curentTasks[0].Stop();
-                curentTasks.Remove(curentTasks[0]);
             }
         }
         

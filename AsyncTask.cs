@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace ru.mofrison.AsyncTaskQueue
+namespace ru.mofrison.AsyncTasks
 {
     public class AsyncTask
     {
@@ -10,28 +10,28 @@ namespace ru.mofrison.AsyncTaskQueue
         public readonly Priority priority;
         private readonly Task task;
         private CancellationTokenSource cancellationToken;
-        private readonly System.Action<AsyncTask> onFinish;
+        private readonly System.Action<AsyncTask> onExit;
 
-        public AsyncTask(Task task, System.Action<AsyncTask> onFinish, Priority priority) 
+        public AsyncTask(Task task, System.Action<AsyncTask> onExit, Priority priority) 
         { 
             this.task = task;
             this.priority = priority;
-            this.onFinish = onFinish;
+            this.onExit = onExit;
         }
 
-        public async System.Threading.Tasks.Task Start()
+        public async System.Threading.Tasks.Task Run()
         {
             cancellationToken = new CancellationTokenSource();
             await task(cancellationToken);
             cancellationToken.Dispose();
-            onFinish?.Invoke(this);
+            onExit?.Invoke(this);
         }
 
         public void Stop()
         {
             cancellationToken.Cancel();
             cancellationToken.Dispose();
-            onFinish?.Invoke(this);
+            onExit?.Invoke(this);
         }
     }
 }
