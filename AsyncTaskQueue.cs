@@ -75,9 +75,11 @@ namespace ru.mofrison.AsyncTasks
             }
         }
 
-        public void Add(Task task, Priority priority = Priority.Default)
+        public AsyncTask Add(Task task, Priority priority = Priority.Default)
         {
-            Add(new AsyncTask(task, RemoveFromCurrentTasks, priority));
+            var asyncTask = new AsyncTask(task, RemoveFromCurrentTasks, priority);
+            Add(asyncTask);
+            return asyncTask;
         }
 
         public bool Contains(AsyncTask task)
