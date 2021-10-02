@@ -109,6 +109,31 @@ namespace ru.mofrison.AsyncTasks
             return null;
         }
 
+        public void Remove(AsyncTask task)
+        {
+            if(curentTasks.Contains(task)) {
+                task.Stop(); 
+                return; 
+            }
+
+            if (task.priority == AsyncTask.Priority.Default)
+            {
+                if (defaultQueue.Contains(task)) { 
+                    defaultQueue.Remove(task); 
+                    return; 
+                }
+            }
+            else
+            {
+                if (highQueue.Contains(task)) { 
+                    highQueue.Remove(task);
+                    return;
+                }
+            }
+
+            throw new Exception(string.Format("[{0}] error: Missing {1} value with priority {2}", this, task, task.priority));
+        }
+
         public void Clear()
         {
             defaultQueue.Clear();
