@@ -41,7 +41,14 @@ namespace ru.mofrison.AsyncTasks
                     }
                 case AsyncTask.Priority.Interrupt:
                     {
-                        highQueue.Insert(0, item);
+                        int i = highQueue.Count - 1;
+                        while(i > -1)
+                        {
+                            if(highQueue[i].priority == Priority.Interrupt) { break; }
+                            i--;
+                        }
+                        highQueue.Insert(++i, item);
+
                         if (curentTasks.Count == maxNumberOfThreads)
                         {
                             switch (curentTasks[0].priority)
@@ -102,11 +109,6 @@ namespace ru.mofrison.AsyncTasks
             return null;
         }
 
-        private void RemoveFromCurrentTasks(AsyncTask task)
-        {
-            if (curentTasks.Contains(task)) { curentTasks.Remove(task); }
-        }
-
         public void Clear()
         {
             defaultQueue.Clear();
@@ -116,7 +118,12 @@ namespace ru.mofrison.AsyncTasks
                 curentTasks[0].Stop();
             }
         }
-        
+
+        private void RemoveFromCurrentTasks(AsyncTask task)
+        {
+            if (curentTasks.Contains(task)) { curentTasks.Remove(task); }
+        }
+
         public class Exception : System.Exception 
         {
             public Exception(string messge) : base(messge) { }
