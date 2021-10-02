@@ -80,6 +80,11 @@ namespace ru.mofrison.AsyncTasks
             Add(new AsyncTask(task, RemoveFromCurrentTasks, priority));
         }
 
+        public bool Contains(AsyncTask task)
+        {
+            return defaultQueue.Contains(task) || highQueue.Contains(task) || curentTasks.Contains(task); 
+        }
+
         public AsyncTask GetNext()
         {
             List<AsyncTask> queue;
