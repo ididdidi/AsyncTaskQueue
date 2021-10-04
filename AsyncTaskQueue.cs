@@ -77,7 +77,7 @@ namespace ru.mofrison.AsyncTasks
 
         public AsyncTask Add(Task task, Priority priority = Priority.Default)
         {
-            var asyncTask = new AsyncTask(task, RemoveFromCurrentTasks, priority);
+            var asyncTask = new AsyncTask(task, AddToCurrentTasks, RemoveFromCurrentTasks, priority);
             Add(asyncTask);
             return asyncTask;
         }
@@ -101,17 +101,9 @@ namespace ru.mofrison.AsyncTasks
 
             if (queue.Count > 0)
             {
-                if(curentTasks.Count < maxNumberOfThreads)
-                {
-                    curentTasks.Insert(0, queue[0]);
-                    queue.Remove(curentTasks[0]);
-                    return curentTasks[0];
-                }
-                else
-                {
-                    throw new Exception(
-                        string.Format("[{0}] error: the list of current tasks is full, wait until one of the current tasks is completed", this));
-                }
+                var nextTask = queue[0];
+                queue.Remove(nextTask);
+                return nextTask;
             }
             return null;
         }
@@ -148,6 +140,19 @@ namespace ru.mofrison.AsyncTasks
             while(curentTasks.Count > 0)
             {
                 curentTasks[0].Stop();
+            }
+        }
+
+        private void AddToCurrentTasks(AsyncTask task)
+        {
+            if (curentTasks.Count < maxNumberOfThreads)
+            {
+                curentTasks.Insert(0, task);
+            }
+            else
+            {
+                throw new Exception(
+                    string.Format("[{0}] error: the list of current tasks is full, wait until one of the current tasks is completed", this));
             }
         }
 

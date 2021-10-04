@@ -10,17 +10,20 @@ namespace ru.mofrison.AsyncTasks
         public readonly Priority priority;
         private readonly Task task;
         private CancellationTokenSource cancellationToken;
+        private readonly System.Action<AsyncTask> onStart;
         private readonly System.Action<AsyncTask> onExit;
 
-        public AsyncTask(Task task, System.Action<AsyncTask> onExit, Priority priority) 
+        public AsyncTask(Task task, System.Action<AsyncTask> onStart,  System.Action<AsyncTask> onExit, Priority priority) 
         { 
             this.task = task;
             this.priority = priority;
+            this.onStart = onStart;
             this.onExit = onExit;
         }
 
         public async System.Threading.Tasks.Task Run()
         {
+            onStart?.Invoke(this);
             cancellationToken = new CancellationTokenSource();
             await task(cancellationToken);
             cancellationToken.Dispose();
