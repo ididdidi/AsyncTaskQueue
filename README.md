@@ -72,7 +72,7 @@ for(int i=0; i<5; i++)
 var asyncTask = taskQueue.GetNext();
 while (asyncTask != null)
 {
-    await asyncTask.Start();
+    await asyncTask.Run();
     try
     {
         asyncTask = taskQueue.GetNext();
