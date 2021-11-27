@@ -20,7 +20,7 @@ namespace ru.mofrison.AsyncTasks
             if(maxNumberOfThreads < 1)
             {
                 throw new System.ArgumentException(
-                    string.Format("{0} - maximum size of current tasks = {1}. Please set it to a value greater than 1 ", this, maxNumberOfThreads));
+                    string.Format("AsyncTaskQueue - maximum size of current tasks = {0}. Please set it to a value greater than 1 ", maxNumberOfThreads));
             }
             this.maxNumberOfThreads = maxNumberOfThreads;
         }
@@ -130,7 +130,7 @@ namespace ru.mofrison.AsyncTasks
                 }
             }
 
-            throw new Exception(string.Format("{0} - Missing {1} value with priority {2}", this, task, task.priority));
+            throw new Exception(string.Format("AsyncTaskQueue.Remove - Missing {0} value with priority {1}", task, task.priority));
         }
 
         public void Clear()
@@ -151,8 +151,7 @@ namespace ru.mofrison.AsyncTasks
             }
             else
             {
-                throw new Exception(
-                    string.Format("{0} - the list of current tasks is full, wait until one of the current tasks is completed", this));
+                throw new Exception("AsyncTaskQueue.AddToCurrentTasks - the list of current tasks is full, wait until one of the current tasks is completed");
             }
         }
 
