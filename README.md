@@ -84,8 +84,3 @@ while (asyncTask != null)
 }
 ```
 
-A more informative example can be found in the [Unity3d-AsyncTaskQueue-example](https://github.com/joemccann/dillinger) project.
-
-## License
-
-MIT
